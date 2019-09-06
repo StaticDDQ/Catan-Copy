@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Selector : MonoBehaviour
 {
@@ -9,10 +7,13 @@ public class Selector : MonoBehaviour
     private bool placingCity = false;
 
     private PlayerState ps;
+    private Camera cam;
+    [SerializeField] private LayerMask layermask = new LayerMask();
 
     private void Start()
     {
         ps = GetComponent<PlayerState>();
+        cam = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -22,13 +23,13 @@ public class Selector : MonoBehaviour
         {
             RaycastHit hit = new RaycastHit();
 
-            bool isHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit);
+            bool isHit = Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit,Mathf.Infinity, layermask);
 
             if (isHit)
             {
                 if (hit.transform.CompareTag("Block"))
                 {
-                    hit.transform.GetComponent<Interactable>().Interact(ps);
+                    hit.transform.GetComponent<Interactable>().photonView.RPC("Interact",Photon.Pun.RpcTarget.All,ps);
                 }
             }
         }

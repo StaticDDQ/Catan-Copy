@@ -1,41 +1,72 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using System.Collections;
 
-public class GameState : MonoBehaviour
+public class GameState : MonoBehaviourPunCallbacks
 {
-    private List<PlayerState> players;
+    public static GameState instance;
+
+    [SerializeField] private PlayerState playerPrefab = null;
+    private Player currPlayer;
 
     private void Start()
     {
-        players = new List<PlayerState>();
+        if (instance == null)
+        {
+            instance = this;
+
+            SpawnPlayer();
+
+            currPlayer = PhotonNetwork.PlayerList[0];
+
+            if(PhotonNetwork.IsMasterClient)
+                StartCoroutine(LoadGrid());
+        }
     }
 
-    public void NextPlayer()
+    private IEnumerator LoadGrid()
     {
-        int result = RollDice.Roll();
+        yield return new WaitForSeconds(5);
 
-        if(result == 7)
+        photonView.RPC("NextPlayer", RpcTarget.All, -1);
+    }
+
+    [PunRPC]
+    public void NextPlayer(int diceResult)
+    {
+        Debug.Log("Start player's turn");
+        
+        if(diceResult == 7)
         {
-            foreach(PlayerState player in players)
-            {
-                player.DropHalve();
-            }
+            playerPrefab.DropHalve();
+
+            playerPrefab.MoveKnight(currPlayer.ActorNumber);
         }
-        else
+        else if(diceResult != -1)
         {
             foreach (Transform panel in transform)
             {
-                if (panel.GetComponent<ResourceInfo>().GetRandom() == result)
+                if (panel.GetComponent<ResourceInfo>().GetRandom() == diceResult)
                 {
-
+                    panel.GetComponent<ResourceInfo>().DistributeResource();
                 }
             }
         }
+
+        playerPrefab.StartTurn(currPlayer.ActorNumber);
+
+        currPlayer = currPlayer.GetNext();
     }
 
-    public void JoinedPlayer(PlayerState newPlayer)
+    private void SpawnPlayer()
     {
-        players.Add(newPlayer);
+        Debug.Log("Creating Player " + PhotonNetwork.LocalPlayer.ActorNumber);
+        playerPrefab.SetID(PhotonNetwork.LocalPlayer.ActorNumber);
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
     }
 }

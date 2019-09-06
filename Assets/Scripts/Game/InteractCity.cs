@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class InteractCity : Interactable
 {
@@ -13,6 +14,7 @@ public class InteractCity : Interactable
 
     private Transform currObj;
 
+    [PunRPC]
     public override void Interact(PlayerState player)
     {
         if(!hasSettlement && player.PlaceSettlement())
@@ -31,10 +33,6 @@ public class InteractCity : Interactable
             currObj.localPosition = Vector3.zero + offset;
             currObj.localRotation = Quaternion.identity;
             currObj.GetComponent<ObjectHolder>().SetOwner(player);
-        }
-        else
-        {
-
         }
     }
 

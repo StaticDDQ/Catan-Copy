@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using System.IO;
 
-public class Grid : MonoBehaviour
+public class Grid : MonoBehaviourPunCallbacks
 {
     public int gridWidth = 11;
     public int gridHeight = 11;
@@ -16,11 +18,12 @@ public class Grid : MonoBehaviour
     [SerializeField] protected List<int> randomNums;
 
     // 0-wood, 1-clay, 2-wheat, 3-stone, 4-sheep, 5-desert
-    [SerializeField] protected List<Transform> resources;
+    [SerializeField] protected List<int> resources;
     
     private void Start()
     {
-        GenerateGrid();
+        if(PhotonNetwork.IsMasterClient)
+            GenerateGrid();
     }
 
     public void GenerateGrid()
@@ -73,10 +76,8 @@ public class Grid : MonoBehaviour
             newY = y * multi;
             for (int x = 0 + offset; x < newX + offset; x++)
             {
-                Transform hex = RandomizeMap();
                 Vector2 gridPos = new Vector2(x, newY);
-                hex.position = CalcWorldPos(gridPos);
-                hex.parent = this.transform;
+                RandomizeMap(gridPos);
                 yield return new WaitForSeconds(0.5f);
             }
 
@@ -95,28 +96,23 @@ public class Grid : MonoBehaviour
         }
     }
 
-    private Transform RandomizeMap()
+    private void RandomizeMap(Vector2 gridPos)
     {
         int randomNum;
 
-        // resource index
-        Transform randomPanel;
-
         // Instantiate resource panel
-        randomPanel = resources[Random.Range(0, resources.Count)];
+        int randomPanel = resources[Random.Range(0, resources.Count)];
 
-        Transform hex = Instantiate(randomPanel) as Transform;
+        GameObject hex = PhotonNetwork.InstantiateSceneObject(Path.Combine("PhotonPrefab", "Panel" + randomPanel), CalcWorldPos(gridPos), Quaternion.identity, 0);
         resources.Remove(randomPanel);
 
         // if the panel is not a desert
-        if (randomPanel.GetComponent<ResourceInfo>().GetResourceID() != 5)
+        if (hex.GetComponent<ResourceInfo>().GetResourceID() != 5)
         {
             randomNum = randomNums[Random.Range(0, randomNums.Count)];
             randomNums.Remove(randomNum);
 
             hex.GetComponent<ResourceInfo>().SetRandom(randomNum);
         }
-
-        return hex;
     }
 }

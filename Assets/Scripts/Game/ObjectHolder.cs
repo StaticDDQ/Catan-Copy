@@ -9,6 +9,7 @@ public class ObjectHolder : MonoBehaviour
     public void SetOwner(PlayerState newOwner)
     {
         owner = newOwner;
+        GetComponent<Renderer>().material.SetColor("_BaseColor", owner.GetColor());
     }
 
     public PlayerState GetOwner()

@@ -1,48 +1,122 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using Photon.Pun;
 
 public class PlayerState : MonoBehaviour
 {
-    private int roadsRemaining = 10;
+    // number of blocks you can place in the game
+    private int roadsRemaining = 15;
     private int settlementsRemaining = 5;
+    private int citiesRemaining = 4;
+
+    // visual amount of remaining blocks
+    public TextMeshProUGUI roadsAmnt;
+    public TextMeshProUGUI settlementsAmnt;
+    public TextMeshProUGUI citiesAmnt;
+
+    public GameObject turnsButtons;
 
     // 0-wood, 1-clay, 2-wheat, 3-stone, 4-sheep
     public int[] resources;
+    public TextMeshProUGUI[] resourceAmnt;
+
+    // can place a block or not
+    private bool isPlacingRoad = false;
+    private bool isPlacingSettlement = false;
+    private bool isPlacingCity = false;
+
     // game score
     private int score;
 
+    // dev cards storage
     private List<DevelopmentCards> devCards;
     private bool obtainedDevCards = false;
+    // can only use 1 dev card per turn
+    private bool hasUsedDevCard = false;
+
+    private int id;
+
+    private bool setupPhase = true;
+    private int setupRoad = 2;
+    private int setupSettlement = 1;
+    private int setupCounter = 0;
+
+    [SerializeField] private Color playerColor;
 
     private void Start()
     {
         score = 0;
         //resources = new int[] {0,0,0,0,0};
         devCards = new List<DevelopmentCards>();
+
+        roadsAmnt.text = roadsRemaining.ToString();
+        settlementsAmnt.text = settlementsRemaining.ToString();
+        citiesAmnt.text = citiesRemaining.ToString();
     }
 
-    public void StartTurn()
+    public void SetColor(Color newColor)
     {
-        if (obtainedDevCards)
+        playerColor = newColor;
+    }
+
+    public Color GetColor()
+    {
+        return playerColor;
+    }
+
+    public void StartTurn(int ingoingID)
+    {
+        if(ingoingID == id)
         {
-            foreach(DevelopmentCards card in devCards)
+            StartTurn(true);
+
+            if (obtainedDevCards)
             {
-                card.SetUse(true);
+                foreach (DevelopmentCards card in devCards)
+                {
+                    card.SetUse(true);
+                }
+                obtainedDevCards = false;
             }
-            obtainedDevCards = false;
+
+            hasUsedDevCard = false;
+
+            if (setupPhase)
+            {
+                setupSettlement = 1;
+                setupRoad = 2;
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isPlacingRoad = false;
+            isPlacingSettlement = false;
+            isPlacingCity = false;
         }
     }
 
     public bool UpgradeSettlement()
     {
-        if(resources[3] >= 3 && resources[2] >= 2)
+        if(isPlacingCity && citiesRemaining > 0 && resources[3] >= 3 && resources[2] >= 2)
         {
             settlementsRemaining++;
+            citiesRemaining--;
+
             score++;
 
             resources[3] -= 3;
             resources[2] -= 2;
+
+            settlementsAmnt.text = settlementsRemaining.ToString();
+            citiesAmnt.text = citiesRemaining.ToString();
+            
+            resourceAmnt[2].text = resources[2].ToString();
+            resourceAmnt[3].text = resources[3].ToString();
 
             if (score == 10)
             {
@@ -57,11 +131,22 @@ public class PlayerState : MonoBehaviour
 
     public bool PlaceRoad()
     {
-        if(roadsRemaining > 0 && resources[0] > 0 && resources[1] > 0)
+        if((isPlacingRoad && roadsRemaining > 0 && resources[0] > 0 && resources[1] > 0) || setupRoad > 0)
         {
             roadsRemaining--;
-            resources[0]--;
-            resources[1]--;
+
+            roadsAmnt.text = roadsRemaining.ToString();
+
+            if (setupRoad > 0)
+            {
+                resources[0]--;
+                resources[1]--;
+                resourceAmnt[0].text = resources[0].ToString();
+                resourceAmnt[1].text = resources[1].ToString();
+            } else
+            {
+                setupRoad--;
+            }
 
             return true;
         }
@@ -71,15 +156,27 @@ public class PlayerState : MonoBehaviour
 
     public bool PlaceSettlement()
     {
-        if (settlementsRemaining > 0 && resources[0] > 0 && resources[1] > 0 &&
-            resources[2] > 0 && resources[4] > 0)
+        if ((isPlacingSettlement && settlementsRemaining > 0 && resources[0] > 0 && resources[1] > 0 &&
+            resources[2] > 0 && resources[4] > 0) || setupSettlement > 0)
         {
             settlementsRemaining--;
 
-            resources[0]--;
-            resources[1]--;
-            resources[2]--;
-            resources[4]--;
+            settlementsAmnt.text = settlementsRemaining.ToString();
+
+            if (setupSettlement > 0)
+            {
+                resources[0]--;
+                resources[1]--;
+                resources[2]--;
+                resources[4]--;
+                resourceAmnt[0].text = resources[0].ToString();
+                resourceAmnt[1].text = resources[1].ToString();
+                resourceAmnt[2].text = resources[2].ToString();
+                resourceAmnt[4].text = resources[4].ToString();
+            } else
+            {
+                setupSettlement--;
+            }
 
             score++;
             if(score == 10)
@@ -96,6 +193,21 @@ public class PlayerState : MonoBehaviour
     public void GetResource(int resourceID)
     {
         resources[resourceID] += 1;
+        resourceAmnt[resourceID].text = resources[resourceID].ToString();
+    }
+
+    public void BuyDevCard()
+    {
+        if(resources[2] > 0 && resources[3] > 0 && resources[4] > 0)
+        {
+            resources[2]--;
+            resources[3]--;
+            resources[4]--;
+            resourceAmnt[2].text = resources[2].ToString();
+            resourceAmnt[3].text = resources[3].ToString();
+            resourceAmnt[4].text = resources[4].ToString();
+            // generate dev card
+        }
     }
 
     public void AddDevCard(DevelopmentCards devCard)
@@ -104,8 +216,82 @@ public class PlayerState : MonoBehaviour
         obtainedDevCards = true;
     }
 
+    public void UseDevCard(DevelopmentCards devCard)
+    {
+        if (!hasUsedDevCard)
+        {
+            devCard.Effect();
+            hasUsedDevCard = true;
+        }
+    }
+
     public void DropHalve()
     {
+        int sum = 0;
+        for (int i = 0; i < resources.Length; i++)
+        {
+            sum += resources[i];
+        }
 
+        if(sum >= 7)
+        {
+
+        }
+    }
+
+    public void MoveKnight(int id)
+    {
+
+    }
+
+    public void CreateRoad()
+    {
+        isPlacingRoad = true;
+        isPlacingCity = false;
+        isPlacingSettlement = false;
+    }
+
+    public void CreateSettlement()
+    {
+        isPlacingRoad = false;
+        isPlacingCity = false;
+        isPlacingSettlement = true;
+    }
+
+    public void CreateCity()
+    {
+        isPlacingRoad = false;
+        isPlacingCity = true;
+        isPlacingSettlement = false;
+    }
+
+    public void StartTurn(bool isTurn)
+    {
+        turnsButtons.SetActive(isTurn);
+    }
+
+    public void EndTurn()
+    {
+        StartTurn(false);
+
+        if (!setupPhase)
+        {
+            int result = RollDice.Roll();
+            GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, result);
+        }
+        else
+        {
+            setupCounter++;
+            if(setupCounter == 2)
+            {
+                setupPhase = false;
+            }
+            GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, -1);
+        }
+    }
+
+    public void SetID(int newID)
+    {
+        id = newID;
     }
 }

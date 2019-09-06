@@ -1,11 +1,89 @@
 fileFormatVersion: 2
 guid: 23c14ef5df423f7468f1fc2d1fe13199
 ModelImporter:
-  serializedVersion: 28
-  internalIDToNameTable: []
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: num
+    100002: //RootNode
+    100004: plane
+    100006: road.001
+    100008: road.002
+    100010: road.003
+    100012: road.004
+    100014: road.005
+    100016: road.006
+    100018: settlement.001
+    100020: settlement.002
+    100022: settlement.003
+    100024: settlement.004
+    100026: settlement.005
+    100028: settlement.006
+    100030: texture
+    400000: num
+    400002: //RootNode
+    400004: plane
+    400006: road.001
+    400008: road.002
+    400010: road.003
+    400012: road.004
+    400014: road.005
+    400016: road.006
+    400018: settlement.001
+    400020: settlement.002
+    400022: settlement.003
+    400024: settlement.004
+    400026: settlement.005
+    400028: settlement.006
+    400030: texture
+    2100000: No Name
+    2300000: num
+    2300002: plane
+    2300004: road.001
+    2300006: road.002
+    2300008: road.003
+    2300010: road.004
+    2300012: road.005
+    2300014: road.006
+    2300016: settlement.001
+    2300018: settlement.002
+    2300020: settlement.003
+    2300022: settlement.004
+    2300024: settlement.005
+    2300026: settlement.006
+    2300028: texture
+    3300000: num
+    3300002: plane
+    3300004: road.001
+    3300006: road.002
+    3300008: road.003
+    3300010: road.004
+    3300012: road.005
+    3300014: road.006
+    3300016: settlement.001
+    3300018: settlement.002
+    3300020: settlement.003
+    3300022: settlement.004
+    3300024: settlement.005
+    3300026: settlement.006
+    3300028: texture
+    4300000: plane
+    4300002: texture
+    4300004: road.001
+    4300006: road.002
+    4300008: road.003
+    4300010: road.004
+    4300012: road.005
+    4300014: road.006
+    4300016: settlement.001
+    4300018: settlement.002
+    4300020: settlement.003
+    4300022: settlement.004
+    4300024: settlement.005
+    4300026: settlement.006
+    4300028: num
   externalObjects: {}
   materials:
-    materialImportMode: 1
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -38,7 +116,6 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
-    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -46,19 +123,18 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
+    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
-    skinWeightsMode: 0
-    maxBonesPerVertex: 4
-    minBoneWeight: 0.001
-    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 0
     normalImportMode: 1
@@ -67,10 +143,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips: []
   importAnimation: 1
+  copyAvatar: 0
   humanDescription:
-    serializedVersion: 3
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -80,7 +156,6 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1
@@ -88,7 +163,6 @@ ModelImporter:
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 0
   humanoidOversampling: 1
-  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
