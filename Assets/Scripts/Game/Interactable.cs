@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Photon.Pun;
+﻿using Photon.Pun;
 
 public abstract class Interactable : MonoBehaviourPunCallbacks
 {
-    public abstract void Interact(PlayerState player);
+    public abstract void Interact(int player, bool planning);
 }

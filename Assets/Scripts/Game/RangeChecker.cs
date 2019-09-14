@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class RangeChecker : MonoBehaviour
 {
-    private List<ObjectHolder> currPlaced;
+    [SerializeField] private List<ObjectHolder> currPlaced;
 
     private void Start()
     {
@@ -14,7 +14,8 @@ public class RangeChecker : MonoBehaviour
     {
         foreach (ObjectHolder placed in currPlaced)
         {
-            placed.GetOwner().GetResource(transform.parent.GetComponent<ResourceInfo>().GetResourceID());
+            if(placed.GetOwner() != null)
+                placed.GetOwner().GetResource(transform.parent.GetComponent<ResourceInfo>().GetResourceID());
         }
     }
 

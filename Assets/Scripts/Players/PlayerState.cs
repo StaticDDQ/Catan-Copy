@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class PlayerState : MonoBehaviour
@@ -11,15 +11,15 @@ public class PlayerState : MonoBehaviour
     private int citiesRemaining = 4;
 
     // visual amount of remaining blocks
-    public TextMeshProUGUI roadsAmnt;
-    public TextMeshProUGUI settlementsAmnt;
-    public TextMeshProUGUI citiesAmnt;
+    public Text roadsAmnt;
+    public Text settlementsAmnt;
+    public Text citiesAmnt;
 
     public GameObject turnsButtons;
 
     // 0-wood, 1-clay, 2-wheat, 3-stone, 4-sheep
     public int[] resources;
-    public TextMeshProUGUI[] resourceAmnt;
+    public Text[] resourceAmnt;
 
     // can place a block or not
     private bool isPlacingRoad = false;
@@ -35,29 +35,37 @@ public class PlayerState : MonoBehaviour
     // can only use 1 dev card per turn
     private bool hasUsedDevCard = false;
 
-    private int id;
-
-    private bool setupPhase = true;
     private int setupRoad = 2;
     private int setupSettlement = 1;
-    private int setupCounter = 0;
 
+    private bool movingKnight = false;
+    private bool hasPlacedKnight = true;
+    private ResourceInfo prevPanel;
+    
     [SerializeField] private Color playerColor;
+
+    public static PlayerState instance;
 
     private void Start()
     {
-        score = 0;
-        //resources = new int[] {0,0,0,0,0};
-        devCards = new List<DevelopmentCards>();
+        if(instance == null)
+        {
+            instance = this;
 
-        roadsAmnt.text = roadsRemaining.ToString();
-        settlementsAmnt.text = settlementsRemaining.ToString();
-        citiesAmnt.text = citiesRemaining.ToString();
+            score = 0;
+            resources = new int[] {0,0,0,0,0};
+            devCards = new List<DevelopmentCards>();
+
+            roadsAmnt.text = roadsRemaining.ToString();
+            settlementsAmnt.text = settlementsRemaining.ToString();
+            citiesAmnt.text = citiesRemaining.ToString();
+        }
     }
 
-    public void SetColor(Color newColor)
+    public void SetColor(int id, Color newColor)
     {
-        playerColor = newColor;
+        if(id == PhotonNetwork.LocalPlayer.ActorNumber)
+            playerColor = newColor;
     }
 
     public Color GetColor()
@@ -65,11 +73,12 @@ public class PlayerState : MonoBehaviour
         return playerColor;
     }
 
-    public void StartTurn(int ingoingID)
+    public void StartTurn(int ingoingID, bool setupPhase)
     {
-        if(ingoingID == id)
+        if(ingoingID == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-            StartTurn(true);
+            Debug.Log("Start turn");
+            turnsButtons.SetActive(true);
 
             if (obtainedDevCards)
             {
@@ -85,8 +94,10 @@ public class PlayerState : MonoBehaviour
             if (setupPhase)
             {
                 setupSettlement = 1;
-                setupRoad = 2;
+                setupRoad = 2;  
             }
+
+            GetComponent<Selector>().SetSetupPhase(setupPhase);
         }
     }
 
@@ -131,7 +142,7 @@ public class PlayerState : MonoBehaviour
 
     public bool PlaceRoad()
     {
-        if((isPlacingRoad && roadsRemaining > 0 && resources[0] > 0 && resources[1] > 0) || setupRoad > 0)
+        if(isPlacingRoad && roadsRemaining > 0 && ((resources[0] > 0 && resources[1] > 0) || setupRoad > 0))
         {
             roadsRemaining--;
 
@@ -139,13 +150,13 @@ public class PlayerState : MonoBehaviour
 
             if (setupRoad > 0)
             {
+                setupRoad--;
+            } else
+            {
                 resources[0]--;
                 resources[1]--;
                 resourceAmnt[0].text = resources[0].ToString();
                 resourceAmnt[1].text = resources[1].ToString();
-            } else
-            {
-                setupRoad--;
             }
 
             return true;
@@ -156,14 +167,19 @@ public class PlayerState : MonoBehaviour
 
     public bool PlaceSettlement()
     {
-        if ((isPlacingSettlement && settlementsRemaining > 0 && resources[0] > 0 && resources[1] > 0 &&
-            resources[2] > 0 && resources[4] > 0) || setupSettlement > 0)
+        if (isPlacingSettlement && settlementsRemaining > 0 && ((resources[0] > 0 && resources[1] > 0 &&
+            resources[2] > 0 && resources[4] > 0) || setupSettlement > 0))
         {
             settlementsRemaining--;
 
             settlementsAmnt.text = settlementsRemaining.ToString();
 
             if (setupSettlement > 0)
+            {
+
+                setupSettlement--;
+                
+            } else
             {
                 resources[0]--;
                 resources[1]--;
@@ -173,9 +189,6 @@ public class PlayerState : MonoBehaviour
                 resourceAmnt[1].text = resources[1].ToString();
                 resourceAmnt[2].text = resources[2].ToString();
                 resourceAmnt[4].text = resources[4].ToString();
-            } else
-            {
-                setupSettlement--;
             }
 
             score++;
@@ -241,7 +254,10 @@ public class PlayerState : MonoBehaviour
 
     public void MoveKnight(int id)
     {
-
+        if(id == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            movingKnight = true;
+        }
     }
 
     public void CreateRoad()
@@ -265,33 +281,52 @@ public class PlayerState : MonoBehaviour
         isPlacingSettlement = false;
     }
 
-    public void StartTurn(bool isTurn)
-    {
-        turnsButtons.SetActive(isTurn);
-    }
-
     public void EndTurn()
     {
-        StartTurn(false);
+        if (setupRoad > 0 || setupSettlement > 0)
+            return;
 
-        if (!setupPhase)
-        {
-            int result = RollDice.Roll();
-            GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, result);
-        }
-        else
-        {
-            setupCounter++;
-            if(setupCounter == 2)
-            {
-                setupPhase = false;
-            }
-            GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, -1);
-        }
+        isPlacingRoad = false;
+        isPlacingCity = false;
+        isPlacingSettlement = false;
+
+        int result = RollDice.Roll();
+        GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, result);
+
+        turnsButtons.SetActive(false);
     }
 
-    public void SetID(int newID)
+    public bool IsMovingKnight()
     {
-        id = newID;
+        return movingKnight;
+    }
+
+    public void HasMoveKnight(ResourceInfo prevPanel)
+    {
+        movingKnight = false;
+
+        hasPlacedKnight = false;
+
+        this.prevPanel = prevPanel;
+    }
+
+    public bool HasPlacedKnight()
+    {
+        return hasPlacedKnight;
+    }
+
+    public void SetPlacedKnight()
+    {
+        hasPlacedKnight = true;
+        this.prevPanel.photonView.RPC("SetUnderKnight", RpcTarget.All, false);
+    }
+
+    public void SetResources(int[] newResources)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            resources[i] = newResources[i];
+            resourceAmnt[i].text = newResources[i].ToString();
+        }
     }
 }

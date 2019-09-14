@@ -45,5 +45,13 @@ MonoBehaviour:
   - AssembleList
   - NextPlayer
   - Interact
+  - SetColor
+  - ReservePanel
+  - SetUnderKnight
+  - AssignPlayerColor
+  - SetOwner
+  - SetGivenText
+  - ChangeTag
+  - DisallowPlacement
   DisableAutoOpenWizard: 1
   ShowSettings: 1

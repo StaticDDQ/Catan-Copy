@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
+
 
 public class Selector : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class Selector : MonoBehaviour
 
     private PlayerState ps;
     private Camera cam;
+    private bool setupPhase = false;
     [SerializeField] private LayerMask layermask = new LayerMask();
 
     private void Start()
@@ -29,7 +32,17 @@ public class Selector : MonoBehaviour
             {
                 if (hit.transform.CompareTag("Block"))
                 {
-                    hit.transform.GetComponent<Interactable>().photonView.RPC("Interact",Photon.Pun.RpcTarget.All,ps);
+                    hit.transform.GetComponent<Interactable>().photonView.RPC("Interact",RpcTarget.All,PhotonNetwork.LocalPlayer.ActorNumber, setupPhase);
+                }
+                else if (hit.transform.CompareTag("Panel") && !hit.transform.parent.GetComponent<ResourceInfo>().IsUnderKnight() && !ps.HasPlacedKnight())
+                {
+                    hit.transform.parent.GetComponent<ResourceInfo>().photonView.RPC("SetUnderKnight", RpcTarget.All, true);
+                    ps.SetPlacedKnight();
+                }
+                else if(hit.transform.CompareTag("Knight") && ps.IsMovingKnight())
+                {
+                    ps.HasMoveKnight(hit.transform.parent.GetComponent<ResourceInfo>());
+
                 }
             }
         }
@@ -63,5 +76,10 @@ public class Selector : MonoBehaviour
     public bool GetPlacingCity()
     {
         return placingCity;
+    }
+
+    public void SetSetupPhase(bool isSetup)
+    {
+        this.setupPhase = isSetup;
     }
 }

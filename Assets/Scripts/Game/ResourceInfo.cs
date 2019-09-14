@@ -10,6 +10,9 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
     [SerializeField] private int resourceID = -1;
     [SerializeField] private TextMeshProUGUI numTxt = null;
     [SerializeField] private RangeChecker rChecker = null;
+    [SerializeField] private bool underKnight = false;
+
+    [SerializeField] private GameObject knight;
 
     public int GetResourceID() {
         return this.resourceID;
@@ -31,7 +34,7 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SetPanelNumber(int random)
+    private void SetPanelNumber(int random)
     {
         randomNum = random;
         numTxt.text = random.ToString();
@@ -43,6 +46,26 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
 
     public void DistributeResource()
     {
-        rChecker.DistributeResource();
+        if(!underKnight)
+            rChecker.DistributeResource();
+    }
+
+    [PunRPC]
+    public void SetUnderKnight(bool underKnight)
+    {
+        this.underKnight = underKnight;
+
+        if (underKnight)
+        {
+            knight = PhotonNetwork.Instantiate("knight", transform.position, Quaternion.Euler(-90f, 0, 0));
+        } else
+        {
+            PhotonNetwork.Destroy(knight);
+        }
+    }
+
+    public bool IsUnderKnight()
+    {
+        return underKnight;
     }
 }
