@@ -13,7 +13,7 @@ public class InteractCity : Interactable
     [SerializeField] private Vector3 offset = Vector3.zero;
 
     public bool canPlace = false;
-    private bool occupiedPlace = false;
+    public bool occupiedPlace = false;
     private List<int> allowedIDs = new List<int>();
 
     private GameObject currObj;

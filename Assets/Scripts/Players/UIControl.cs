@@ -8,34 +8,15 @@ public class UIControl : MonoBehaviour
     [SerializeField] private GameObject rules = null;
     [SerializeField] private GameObject devCardPage = null;
     [SerializeField] private GameObject dropResourcePage = null;
+    [SerializeField] private GameObject tradePanel = null;
 
-    [SerializeField] private Text woodRemain = null;
-    [SerializeField] private Text clayRemain = null;
-    [SerializeField] private Text wheatRemain = null;
-    [SerializeField] private Text stoneRemain = null;
-    [SerializeField] private Text sheepRemain = null;
+    [SerializeField] private Text[] resourceMaxText = null;
+    [SerializeField] private Text[] resourceDropText = null;
 
-    [SerializeField] private Text wood = null;
-    [SerializeField] private Text clay = null;
-    [SerializeField] private Text wheat = null;
-    [SerializeField] private Text stone = null;
-    [SerializeField] private Text sheep = null;
-
-    private int woodDrop = 0;
-    private int clayDrop = 0;
-    private int wheatDrop = 0;
-    private int stoneDrop = 0;
-    private int sheepDrop = 0;
-
-    private int woodMax = 0;
-    private int clayMax = 0;
-    private int wheatMax = 0;
-    private int stoneMax = 0;
-    private int sheepMax = 0;
+    private int[] resourceMax;
+    private int[] resourceDrop;
 
     private int halveResourcesAmnt = 0;
-
-    [SerializeField] private PlayerState player = null;
 
     private bool rulesShowing = false;
 
@@ -64,125 +45,65 @@ public class UIControl : MonoBehaviour
         devCardPage.SetActive(false);
     }
 
+    public void OpenTradePanel()
+    {
+        tradePanel.SetActive(true);
+    }
+
+    public void CloseTradePanel()
+    {
+        tradePanel.SetActive(false);
+    }
+
+    //setup for drop resource page, calculate how much resources must be dropped
     public void SetDropPage(int[] resources)
     {
-        woodMax = resources[0];
-        clayMax = resources[1];
-        wheatMax = resources[2];
-        stoneMax = resources[3];
-        sheepMax = resources[4];
+        resourceMax = resources;
 
-        woodRemain.text = woodMax.ToString();
-        clayRemain.text = clayMax.ToString();
-        wheatRemain.text = wheatMax.ToString();
-        stoneRemain.text = stoneMax.ToString();
-        sheepRemain.text = sheepMax.ToString();
-
-        foreach (int resource in resources)
+        for(int i = 0; i < 5; i++)
         {
-            halveResourcesAmnt += resource;
+            resourceMaxText[i].text = resourceMax[i].ToString();
+            halveResourcesAmnt += resourceMax[i];
         }
+
         halveResourcesAmnt /= 2;
 
         dropResourcePage.SetActive(true);
+
+        resourceDrop = new int[] { 0, 0, 0, 0, 0 };
     }
 
-    public void WoodAdd()
+    // UI button functions
+    public void ResourceAdd(int index)
     {
-        if (woodDrop < woodMax)
+        if(resourceDrop[index] < resourceMax[index])
         {
-            woodDrop++;
-            wood.text = woodDrop.ToString();
+            resourceDropText[index].text = (++resourceDrop[index]).ToString();
         }
     }
 
-    public void WoodSubtract()
+    public void ResourceSubtract(int index)
     {
-        if (woodDrop > 0)
+        if(resourceDrop[index] > 0)
         {
-            woodDrop--;
-            wood.text = woodDrop.ToString();
-        }
-    }
-
-    public void ClayAdd()
-    {
-        if (clayDrop < clayMax)
-        {
-            clayDrop++;
-            clay.text = clayDrop.ToString();
-        }
-    }
-
-    public void ClaySubtract()
-    {
-        if (clayDrop > 0)
-        {
-            clayDrop--;
-            clay.text = clayDrop.ToString();
-        }
-    }
-
-    public void WheatAdd()
-    {
-        if (wheatDrop < wheatMax)
-        {
-            wheatDrop++;
-            wheat.text = wheatDrop.ToString();
-        }
-    }
-
-    public void WheatSubtract()
-    {
-        if (wheatDrop > 0)
-        {
-            wheatDrop--;
-            wheat.text = wheatDrop.ToString();
-        }
-    }
-
-    public void StoneAdd()
-    {
-        if (stoneDrop < stoneMax)
-        {
-            stoneDrop++;
-            stone.text = stoneDrop.ToString();
-        }
-    }
-
-    public void StoneSubtract()
-    {
-        if (stoneDrop > 0)
-        {
-            stoneDrop--;
-            stone.text = stoneDrop.ToString();
-        }
-    }
-
-    public void SheepAdd()
-    {
-        if (sheepDrop < sheepMax)
-        {
-            sheepDrop++;
-            sheep.text = sheepDrop.ToString();
-        }
-    }
-
-    public void SheepSubtract()
-    {
-        if (sheepDrop > 0)
-        {
-            sheepDrop--;
-            sheep.text = sheepDrop.ToString();
+            resourceDropText[index].text = (--resourceDrop[index]).ToString();
         }
     }
 
     public void DropResources()
     {
-        if(woodDrop + clayDrop + wheatDrop + stoneDrop + sheepDrop == halveResourcesAmnt)
+        int sum = 0;
+        int[] newResources = new int[5];
+
+        for(int i = 0; i < 5; i++)
         {
-            int[] newResources = { woodMax - woodDrop, clayMax - clayDrop, wheatMax - wheatDrop, stoneMax - stoneDrop, sheepMax - sheepDrop };
-            player.SetResources(newResources);
+            sum += resourceDrop[i];
+            newResources[i] = -resourceDrop[i];
+        }
+
+        if(sum == halveResourcesAmnt)
+        {
+            PlayerState.instance.ExchangeResource(newResources);
             dropResourcePage.SetActive(false);
         }
     }

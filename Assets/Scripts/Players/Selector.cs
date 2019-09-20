@@ -9,7 +9,9 @@ public class Selector : MonoBehaviour
     private bool placingCity = false;
 
     private PlayerState ps;
+    private PortUIControl portUIControl;
     private Camera cam;
+    
     private bool setupPhase = false;
     [SerializeField] private LayerMask layermask = new LayerMask();
 
@@ -17,6 +19,7 @@ public class Selector : MonoBehaviour
     {
         ps = GetComponent<PlayerState>();
         cam = GetComponent<Camera>();
+        portUIControl = transform.GetChild(0).GetComponent<PortUIControl>();
     }
 
     // Update is called once per frame
@@ -43,6 +46,10 @@ public class Selector : MonoBehaviour
                 {
                     ps.HasMoveKnight(hit.transform.parent.GetComponent<ResourceInfo>());
 
+                }
+                else if (hit.transform.CompareTag("Port") && hit.transform.GetComponent<PortManager>().GetIsAccessible())
+                {
+                    portUIControl.PortUISetup(hit.transform.GetComponent<PortManager>().GetResourceID());
                 }
             }
         }

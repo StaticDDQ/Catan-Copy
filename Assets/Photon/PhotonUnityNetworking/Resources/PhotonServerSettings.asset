@@ -53,5 +53,9 @@ MonoBehaviour:
   - SetGivenText
   - ChangeTag
   - DisallowPlacement
+  - AssignResource
+  - SetResourceID
+  - ReceiveTradeRequest
+  - TradeReply
   DisableAutoOpenWizard: 1
   ShowSettings: 1

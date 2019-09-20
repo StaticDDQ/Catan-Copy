@@ -46,6 +46,7 @@ public class PlayerState : MonoBehaviour
 
     public static PlayerState instance;
 
+    // require only 1 instance of player each local computer
     private void Start()
     {
         if(instance == null)
@@ -62,6 +63,7 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    // assign color to local player
     public void SetColor(int id, Color newColor)
     {
         if(id == PhotonNetwork.LocalPlayer.ActorNumber)
@@ -73,6 +75,7 @@ public class PlayerState : MonoBehaviour
         return playerColor;
     }
 
+    // check if id matches with local player and start turn
     public void StartTurn(int ingoingID, bool setupPhase)
     {
         if(ingoingID == PhotonNetwork.LocalPlayer.ActorNumber)
@@ -80,6 +83,7 @@ public class PlayerState : MonoBehaviour
             Debug.Log("Start turn");
             turnsButtons.SetActive(true);
 
+            // dev cards can now be used
             if (obtainedDevCards)
             {
                 foreach (DevelopmentCards card in devCards)
@@ -89,8 +93,10 @@ public class PlayerState : MonoBehaviour
                 obtainedDevCards = false;
             }
 
+            // limit to only 1 dev card use per turn
             hasUsedDevCard = false;
 
+            // setup phase
             if (setupPhase)
             {
                 setupSettlement = 1;
@@ -101,6 +107,7 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    // cancel action when pressing escape
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -111,6 +118,7 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    #region Block Placing
     public bool UpgradeSettlement()
     {
         if(isPlacingCity && citiesRemaining > 0 && resources[3] >= 3 && resources[2] >= 2)
@@ -203,12 +211,16 @@ public class PlayerState : MonoBehaviour
         return false;
     }
 
+    #endregion
+
+    // receive 1 resource at a time
     public void GetResource(int resourceID)
     {
         resources[resourceID] += 1;
         resourceAmnt[resourceID].text = resources[resourceID].ToString();
     }
 
+    #region Dev Cards
     public void BuyDevCard()
     {
         if(resources[2] > 0 && resources[3] > 0 && resources[4] > 0)
@@ -238,6 +250,8 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    #endregion
+
     public void DropHalve()
     {
         int sum = 0;
@@ -248,10 +262,12 @@ public class PlayerState : MonoBehaviour
 
         if(sum >= 7)
         {
-
+            // open UI to drop x resources
+            transform.GetChild(0).GetComponent<UIControl>().SetDropPage(resources);
         }
     }
 
+    // someone rolled a 7, move the knight
     public void MoveKnight(int id)
     {
         if(id == PhotonNetwork.LocalPlayer.ActorNumber)
@@ -259,6 +275,8 @@ public class PlayerState : MonoBehaviour
             movingKnight = true;
         }
     }
+
+    #region Button Functions
 
     public void CreateRoad()
     {
@@ -283,6 +301,7 @@ public class PlayerState : MonoBehaviour
 
     public void EndTurn()
     {
+        // dont end turn if there is still something to place in setup phase
         if (setupRoad > 0 || setupSettlement > 0)
             return;
 
@@ -296,15 +315,19 @@ public class PlayerState : MonoBehaviour
         turnsButtons.SetActive(false);
     }
 
+    #endregion
+
+    // check if player can move the knight
     public bool IsMovingKnight()
     {
         return movingKnight;
     }
 
+    // began moving knight
     public void HasMoveKnight(ResourceInfo prevPanel)
     {
         movingKnight = false;
-
+        // is now moving the knight
         hasPlacedKnight = false;
 
         this.prevPanel = prevPanel;
@@ -318,15 +341,21 @@ public class PlayerState : MonoBehaviour
     public void SetPlacedKnight()
     {
         hasPlacedKnight = true;
-        this.prevPanel.photonView.RPC("SetUnderKnight", RpcTarget.All, false);
+        prevPanel.photonView.RPC("SetUnderKnight", RpcTarget.All, false);
     }
 
-    public void SetResources(int[] newResources)
+    public void ExchangeResource(int[] gainedAmnt)
     {
-        for (int i = 0; i < 5; i++)
+        for(int i = 0; i < 5; i++)
         {
-            resources[i] = newResources[i];
-            resourceAmnt[i].text = newResources[i].ToString();
+            resources[i] += gainedAmnt[i];
+            resourceAmnt[i].text = resources[i].ToString();
         }
+    }
+
+    // get amount of a certain resource index
+    public int GetResourceAmount(int index)
+    {
+        return resources[index];
     }
 }

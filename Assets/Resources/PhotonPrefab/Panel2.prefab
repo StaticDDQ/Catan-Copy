@@ -114,6 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &7213657033802496717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,7 +177,7 @@ GameObject:
   - component: {fileID: 500525919933827927}
   - component: {fileID: 7388618825865721079}
   - component: {fileID: 7825461760869749845}
-  - component: {fileID: 4179572574383776484}
+  - component: {fileID: 6736223314895892654}
   m_Layer: 0
   m_Name: road.003
   m_TagString: Block
@@ -309,8 +310,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &4179572574383776484
-MeshCollider:
+--- !u!65 &6736223314895892654
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -319,10 +320,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300008, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.5625, y: 0.11249997, z: 0.105468765}
+  m_Center: {x: 0.00000044703484, y: -0.000000014901159, z: 0.000000014901159}
 --- !u!1 &1375312400847216924
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,7 +495,7 @@ GameObject:
   - component: {fileID: 7373222109717433960}
   - component: {fileID: 9054974039581082924}
   - component: {fileID: 7816223038955291991}
-  - component: {fileID: 1950148838522837133}
+  - component: {fileID: 561327379822033808}
   m_Layer: 0
   m_Name: road.001
   m_TagString: Block
@@ -628,8 +628,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &1950148838522837133
-MeshCollider:
+--- !u!65 &561327379822033808
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -638,10 +638,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300004, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.5624999, y: 0.11250007, z: 0.10546874}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1690509354666215359
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,6 +755,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &8037833400028726264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -997,6 +997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &6184626378183384688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1563,7 +1564,7 @@ GameObject:
   - component: {fileID: 2398075820953426623}
   - component: {fileID: 651345786973657697}
   - component: {fileID: 5914497313152879006}
-  - component: {fileID: 2054026123955547351}
+  - component: {fileID: 4466987381861669337}
   m_Layer: 0
   m_Name: road.006
   m_TagString: Block
@@ -1696,8 +1697,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &2054026123955547351
-MeshCollider:
+--- !u!65 &4466987381861669337
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1706,10 +1707,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300014, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.56249994, y: 0.11250007, z: 0.10546879}
+  m_Center: {x: 0.000000014901157, y: -0.0000000149011585, z: 0.000000007450577}
 --- !u!1 &6091296125931144113
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,7 +1725,7 @@ GameObject:
   - component: {fileID: 3096502867301899439}
   - component: {fileID: 4210617385478497183}
   - component: {fileID: 8121053610592234859}
-  - component: {fileID: 7914176973167193536}
+  - component: {fileID: 2452744894549664555}
   m_Layer: 0
   m_Name: road.002
   m_TagString: Block
@@ -1858,8 +1858,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &7914176973167193536
-MeshCollider:
+--- !u!65 &2452744894549664555
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1868,10 +1868,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300006, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.56249994, y: 0.11250012, z: 0.10546877}
+  m_Center: {x: 0.000000014901161, y: -0.000000014901159, z: -1.2717691e-15}
 --- !u!1 &6541821580461265169
 GameObject:
   m_ObjectHideFlags: 0
@@ -1986,6 +1985,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &8666689153071375255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2049,7 +2049,7 @@ GameObject:
   - component: {fileID: 4666677259284147009}
   - component: {fileID: 3841485545775824593}
   - component: {fileID: 4127154490825102191}
-  - component: {fileID: 3670883215752411465}
+  - component: {fileID: 6002929974873836767}
   m_Layer: 0
   m_Name: road.005
   m_TagString: Block
@@ -2182,8 +2182,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &3670883215752411465
-MeshCollider:
+--- !u!65 &6002929974873836767
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2192,10 +2192,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300012, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.56249994, y: 0.11250009, z: 0.105468765}
+  m_Center: {x: -0.00000047683716, y: -0.0000005066395, z: -0.000000007450583}
 --- !u!1 &8256444574344925323
 GameObject:
   m_ObjectHideFlags: 0
@@ -2211,7 +2210,7 @@ GameObject:
   - component: {fileID: 3115075774234469062}
   - component: {fileID: 7989879463733121169}
   - component: {fileID: 8661699775564581548}
-  - component: {fileID: 8117059034228049016}
+  - component: {fileID: 658640235564613537}
   m_Layer: 0
   m_Name: road.004
   m_TagString: Block
@@ -2344,8 +2343,8 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!64 &8117059034228049016
-MeshCollider:
+--- !u!65 &658640235564613537
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2354,10 +2353,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300010, guid: 23c14ef5df423f7468f1fc2d1fe13199, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 0.5625, y: 0.1125001, z: 0.10546874}
+  m_Center: {x: 0, y: 0.000000029802322, z: -8.881784e-16}
 --- !u!1 &8644368981428441366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2472,6 +2470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &4960080619743716365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2633,6 +2632,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0.06, z: 0}
   canPlace: 0
+  occupiedPlace: 0
 --- !u!114 &1597478297816665073
 MonoBehaviour:
   m_ObjectHideFlags: 0

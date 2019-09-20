@@ -10,7 +10,6 @@ public class GameState : MonoBehaviourPunCallbacks
 
     private List<Color> playerColors = new List<Color>() { Color.red, Color.blue, Color.green, Color.yellow };
 
-    [SerializeField] private PlayerState playerPrefab = null;
     [SerializeField] private SetText diceText = null;
     private int index = 0;
     private Player currPlayer;
@@ -55,10 +54,10 @@ public class GameState : MonoBehaviourPunCallbacks
         if (!reverseOrder)
         {
             Color newColor = GetColor();
-            playerPrefab.SetColor(currPlayer.ActorNumber, newColor);
+            PlayerState.instance.SetColor(currPlayer.ActorNumber, newColor);
         }
         
-        playerPrefab.StartTurn(currPlayer.ActorNumber, true);
+        PlayerState.instance.StartTurn(currPlayer.ActorNumber, true);
 
         index = (reverseOrder) ? index - 1 : index + 1;
  
@@ -83,9 +82,9 @@ public class GameState : MonoBehaviourPunCallbacks
 
         if (diceRoll == 7)
         {
-            playerPrefab.DropHalve();
+            PlayerState.instance.DropHalve();
 
-            playerPrefab.MoveKnight(currPlayer.ActorNumber);
+            PlayerState.instance.MoveKnight(currPlayer.ActorNumber);
         }
         else
         {
@@ -98,7 +97,7 @@ public class GameState : MonoBehaviourPunCallbacks
             }
         }
 
-        playerPrefab.StartTurn(currPlayer.ActorNumber, false);
+        PlayerState.instance.StartTurn(currPlayer.ActorNumber, false);
 
         currPlayer = currPlayer.GetNext();
     }
