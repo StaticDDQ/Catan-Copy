@@ -57,5 +57,10 @@ MonoBehaviour:
   - SetResourceID
   - ReceiveTradeRequest
   - TradeReply
+  - ReduceKnight
+  - ReduceVictoryPoint
+  - DisplayDice
+  - SetupPort
+  - WinGame
   DisableAutoOpenWizard: 1
   ShowSettings: 1

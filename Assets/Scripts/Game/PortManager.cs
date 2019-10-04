@@ -4,13 +4,22 @@ using Photon.Pun;
 public class PortManager : MonoBehaviourPunCallbacks
 {
     // 0-wood, 1-clay, 2-wheat, 3-stone, 4-sheep, 5-random
-    private int resourceID = -1;
+    [SerializeField] private int resourceID = -1;
+    [SerializeField] private SpriteRenderer sr = null;
     private bool isAccessible = false;
 
-    [PunRPC]
     public void SetResourceID(int index)
     {
+        photonView.RPC("SetupPort", RpcTarget.All, index);
+    }
+
+    [PunRPC]
+    private void SetupPort(int index)
+    {
         resourceID = index;
+        Debug.Log(index);
+        Debug.Log(SpriteIndex.instance);
+        sr.sprite = SpriteIndex.instance.GetSprite(index);
     }
 
     public int GetResourceID()

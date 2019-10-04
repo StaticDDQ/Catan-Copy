@@ -13,6 +13,9 @@ namespace UnityTemplateProjects
             public float y;
             public float z;
 
+            public Vector3 Min = new Vector3(-7,5, -3.5f);
+            public Vector3 Max = new Vector3(7, 15, 10);
+
             public void SetFromTransform(Transform t)
             {
                 pitch = t.eulerAngles.x;
@@ -28,8 +31,11 @@ namespace UnityTemplateProjects
                 Vector3 rotatedTranslation = Quaternion.Euler(pitch, yaw, roll) * translation;
 
                 x += rotatedTranslation.x;
+                x = Mathf.Clamp(x, Min.x, Max.x);
                 y += rotatedTranslation.y;
+                y = Mathf.Clamp(y, Min.y, Max.y);
                 z += rotatedTranslation.z;
+                z = Mathf.Clamp(z, Min.z, Max.z);
             }
 
             public void LerpTowards(CameraState target, float positionLerpPct, float rotationLerpPct)
@@ -115,19 +121,6 @@ namespace UnityTemplateProjects
                 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
                 #endif
-            }
-
-            // Hide and lock cursor when right mouse button pressed
-            if (Input.GetMouseButtonDown(1))
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-
-            // Unlock and show cursor when right mouse button released
-            if (Input.GetMouseButtonUp(1))
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
             }
 
             // Rotation

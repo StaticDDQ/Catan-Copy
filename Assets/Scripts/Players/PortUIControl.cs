@@ -10,7 +10,6 @@ public class PortUIControl : MonoBehaviour
     [SerializeField] private ResourceUI rUI = null;
 
     [SerializeField] private GameObject portUI = null;
-    [SerializeField] private PlayerState ps = null;
 
     private int index;
     private int resourceCounter;
@@ -25,6 +24,7 @@ public class PortUIControl : MonoBehaviour
         {
             reducer = 3;
             rUI.enabled = true;
+            rUI.AssignImage(portID);
             selectRsourceExchange = false;
         } else
         {
@@ -38,10 +38,11 @@ public class PortUIControl : MonoBehaviour
         portUI.SetActive(true);
     }
 
+    // willing to trade that resource for any other
     public void SetResource(int resourceIndex)
     {
         // amount of that resource the player haves
-        resourceCounter = ps.GetResourceAmount(resourceIndex);
+        resourceCounter = PlayerState.instance.GetResourceAmount(resourceIndex);
         // resource index
         index = resourceIndex;
         // amount of that resource to be exchanged
@@ -67,7 +68,7 @@ public class PortUIControl : MonoBehaviour
             resourcesText[resource].text = resourcesUI[resource].ToString();
 
             counter += reducer;
-            resourceCounterText.text = resourceCounter.ToString();
+            resourceCounterText.text = counter.ToString();
         }
     }
 
@@ -79,7 +80,7 @@ public class PortUIControl : MonoBehaviour
             resourcesText[resource].text = resourcesUI[resource].ToString();
 
             counter -= reducer;
-            resourceCounterText.text = resourceCounter.ToString();
+            resourceCounterText.text = counter.ToString();
         }
     }
 
@@ -89,7 +90,7 @@ public class PortUIControl : MonoBehaviour
         {
             resourcesUI[index] -= counter;
 
-            transform.parent.GetComponent<PlayerState>().ExchangeResource(resourcesUI);
+            PlayerState.instance.ExchangeResource(resourcesUI);
         }
         
         portUI.SetActive(false);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System.IO;
 
 public class PortRandomizer : MonoBehaviour
 {
@@ -11,24 +12,29 @@ public class PortRandomizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(PhotonNetwork.IsMasterClient)
-            AssignRandomPorts();
+        if(!PhotonNetwork.IsMasterClient)
+            StartCoroutine(AssignRandomPorts());
     }
 
-    private void AssignRandomPorts()
+    private IEnumerator AssignRandomPorts()
     {
-        while(resourceIndex != 5)
+        resourceIndex = 0;
+        while(resourceIndex < 5)
         {
+            yield return new WaitForSeconds(0.5f);
+
             int randomIndex = Random.Range(0, ports.Count);
 
-            ports[randomIndex].photonView.RPC("SetResourceID", RpcTarget.All, resourceIndex);
+            ports[randomIndex].SetResourceID(resourceIndex);
             resourceIndex++;
             ports.Remove(ports[randomIndex]);
+
         }
 
         foreach(PortManager port in ports)
         {
-            port.photonView.RPC("SetResourceID", RpcTarget.All, 5);
+            port.SetResourceID(5);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

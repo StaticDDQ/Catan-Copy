@@ -12,7 +12,10 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
     [SerializeField] private RangeChecker rChecker = null;
     [SerializeField] private bool underKnight = false;
 
+    [SerializeField] private GameObject particleEffect = null;
     [SerializeField] private GameObject knight;
+
+    [SerializeField] private GameObject knightPrefab = null;
 
     public int GetResourceID() {
         return this.resourceID;
@@ -46,8 +49,11 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
 
     public void DistributeResource()
     {
-        if(!underKnight)
+        if (!underKnight)
+        {
             rChecker.DistributeResource();
+            Instantiate(particleEffect, transform.position + new Vector3(0,1.75f,0), Quaternion.identity);
+        }
     }
 
     [PunRPC]
@@ -57,10 +63,13 @@ public class ResourceInfo : MonoBehaviourPunCallbacks
 
         if (underKnight)
         {
-            knight = PhotonNetwork.Instantiate("knight", transform.position, Quaternion.Euler(-90f, 0, 0));
+            knight = Instantiate(knightPrefab, transform);
+            knight.transform.localPosition = new Vector3(0,0.5f,0);
+            knight.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+
         } else
         {
-            PhotonNetwork.Destroy(knight);
+            Destroy(knight);
         }
     }
 

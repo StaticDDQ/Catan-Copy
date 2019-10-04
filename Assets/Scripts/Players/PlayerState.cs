@@ -42,7 +42,9 @@ public class PlayerState : MonoBehaviour
     private bool hasPlacedKnight = true;
     private ResourceInfo prevPanel;
     
-    [SerializeField] private Color playerColor;
+    [SerializeField] private Color playerColor = Color.white;
+    [SerializeField] private GameObject notification = null;
+    [SerializeField] private Text notifText = null;
 
     public static PlayerState instance;
 
@@ -100,7 +102,7 @@ public class PlayerState : MonoBehaviour
             if (setupPhase)
             {
                 setupSettlement = 1;
-                setupRoad = 2;  
+                setupRoad = 1;  
             }
 
             GetComponent<Selector>().SetSetupPhase(setupPhase);
@@ -139,10 +141,15 @@ public class PlayerState : MonoBehaviour
 
             if (score == 10)
             {
-                Debug.Log("Win");
+                GameState.instance.photonView.RPC("WinGame", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName);
             }
+            isPlacingCity = false;
 
             return true;
+        } else
+        {
+            notification.SetActive(true);
+            notifText.text = "Not enough resources!";
         }
 
         return false;
@@ -166,8 +173,13 @@ public class PlayerState : MonoBehaviour
                 resourceAmnt[0].text = resources[0].ToString();
                 resourceAmnt[1].text = resources[1].ToString();
             }
+            isPlacingRoad = false;
 
             return true;
+        } else
+        {
+            notification.SetActive(true);
+            notifText.text = "Not enough resources!";
         }
 
         return false;
@@ -202,10 +214,16 @@ public class PlayerState : MonoBehaviour
             score++;
             if(score == 10)
             {
-                Debug.Log("Win");
+                GameState.instance.photonView.RPC("WinGame", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName);
             }
+            isPlacingSettlement = false;
 
             return true;
+        }
+        else
+        {
+            notification.SetActive(true);
+            notifText.text = "Not enough resources!";
         }
 
         return false;
@@ -223,7 +241,7 @@ public class PlayerState : MonoBehaviour
     #region Dev Cards
     public void BuyDevCard()
     {
-        if(resources[2] > 0 && resources[3] > 0 && resources[4] > 0)
+        if(resources[2] > 0 && resources[3] > 0 && resources[4] > 0 && DevelopmentCardGenerator.instance.HasCards())
         {
             resources[2]--;
             resources[3]--;
@@ -232,18 +250,37 @@ public class PlayerState : MonoBehaviour
             resourceAmnt[3].text = resources[3].ToString();
             resourceAmnt[4].text = resources[4].ToString();
             // generate dev card
+
+            AddDevCard(DevelopmentCardGenerator.instance.GetDevelopment());
+        }
+        else if (!DevelopmentCardGenerator.instance.HasCards())
+        {
+            notification.SetActive(true);
+            notifText.text = "Out of development cards!";
+        }
+        else
+        {
+            notification.SetActive(true);
+            notifText.text = "Not enough resources!";
         }
     }
 
-    public void AddDevCard(DevelopmentCards devCard)
+    private void AddDevCard(DevelopmentCards devCard)
     {
         devCards.Add(devCard);
         obtainedDevCards = true;
+
+        transform.GetChild(0).GetComponent<UIControl>().AddDevCard(devCard);
+
+        if(devCard.GetType() == typeof(RewardCard))
+        {
+            devCard.Effect();
+        }
     }
 
     public void UseDevCard(DevelopmentCards devCard)
     {
-        if (!hasUsedDevCard)
+        if (!hasUsedDevCard && devCard.GetType() != typeof(RewardCard))
         {
             devCard.Effect();
             hasUsedDevCard = true;
@@ -251,30 +288,6 @@ public class PlayerState : MonoBehaviour
     }
 
     #endregion
-
-    public void DropHalve()
-    {
-        int sum = 0;
-        for (int i = 0; i < resources.Length; i++)
-        {
-            sum += resources[i];
-        }
-
-        if(sum >= 7)
-        {
-            // open UI to drop x resources
-            transform.GetChild(0).GetComponent<UIControl>().SetDropPage(resources);
-        }
-    }
-
-    // someone rolled a 7, move the knight
-    public void MoveKnight(int id)
-    {
-        if(id == PhotonNetwork.LocalPlayer.ActorNumber)
-        {
-            movingKnight = true;
-        }
-    }
 
     #region Button Functions
 
@@ -309,13 +322,30 @@ public class PlayerState : MonoBehaviour
         isPlacingCity = false;
         isPlacingSettlement = false;
 
-        int result = RollDice.Roll();
-        GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, result);
+        int d1 = RollDice.Roll();
+        int d2 = RollDice.Roll();
+        GameState.instance.photonView.RPC("NextPlayer", RpcTarget.All, d1, d2);
 
         turnsButtons.SetActive(false);
     }
 
+    public void CloseNotification()
+    {
+        notification.SetActive(false);
+    }
+
     #endregion
+
+    #region Knight
+
+    // someone rolled a 7, move the knight
+    public void MoveKnight(int id)
+    {
+        if (id == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            movingKnight = true;
+        }
+    }
 
     // check if player can move the knight
     public bool IsMovingKnight()
@@ -344,6 +374,23 @@ public class PlayerState : MonoBehaviour
         prevPanel.photonView.RPC("SetUnderKnight", RpcTarget.All, false);
     }
 
+    public void DropHalve()
+    {
+        int sum = 0;
+        for (int i = 0; i < resources.Length; i++)
+        {
+            sum += resources[i];
+        }
+
+        if (sum >= 7)
+        {
+            // open UI to drop x resources
+            transform.GetChild(0).GetComponent<UIControl>().SetDropPage(resources);
+        }
+    }
+
+    #endregion
+
     public void ExchangeResource(int[] gainedAmnt)
     {
         for(int i = 0; i < 5; i++)
@@ -357,5 +404,15 @@ public class PlayerState : MonoBehaviour
     public int GetResourceAmount(int index)
     {
         return resources[index];
+    }
+
+    public void IncreasePoint()
+    {
+        score++;
+
+        if(score == 10)
+        {
+            GameState.instance.photonView.RPC("WinGame", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName);
+        }
     }
 }
