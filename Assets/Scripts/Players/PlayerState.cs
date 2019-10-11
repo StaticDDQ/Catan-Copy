@@ -175,6 +175,7 @@ public class PlayerState : MonoBehaviour
             }
             isPlacingRoad = false;
 
+            RewardManager.instance.IncreaseRoads();
             return true;
         } else
         {
@@ -414,5 +415,11 @@ public class PlayerState : MonoBehaviour
         {
             GameState.instance.photonView.RPC("WinGame", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName);
         }
+    }
+
+    public void DecreasePoint(int id)
+    {
+        if(id == PhotonNetwork.LocalPlayer.ActorNumber)
+            score--;
     }
 }

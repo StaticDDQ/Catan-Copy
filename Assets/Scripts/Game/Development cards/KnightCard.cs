@@ -10,6 +10,8 @@ public class KnightCard : DevelopmentCards
         {
             PlayerState.instance.MoveKnight(PhotonNetwork.LocalPlayer.ActorNumber);
             isUsed = true;
+            MessageManager.instance.photonView.RPC("SendMessageText", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName + "has used a knight");
+            RewardManager.instance.IncreaseKnights();
         }
     }
 }
